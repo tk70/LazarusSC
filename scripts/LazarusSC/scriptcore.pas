@@ -23,7 +23,7 @@ interface
   // //////////////////////////// SC3 classes //////////////////////////////////
 	TActiveBullet = class;
   TActiveFlag = class;
-  TActiveObject = class;
+  TActiveMapObject = class;
   TActivePlayer = class;
   TActiveSpawnPoint = class;
 	TBanLists = class;
@@ -45,6 +45,12 @@ interface
   TTeam = class;
   TThing = class;
 	TWeapon = class;
+
+  TStringArray = array of string;
+
+  TVector = record
+    x, y: single;
+  end;
 
   // //////////////////////////// SC3 enums ////////////////////////////////////
   TJoinType = (TJoinNormal, TJoinSilent);
@@ -83,7 +89,7 @@ interface
   TOnFlagDrop = procedure(Player: TActivePlayer; Flag: TActiveFlag;
     Team: Byte; Thrown: Boolean);
   TOnKitPickup = procedure(Player: TActivePlayer;
-    Kit: TActiveObject);
+    Kit: TActiveMapObject);
   TOnBeforeRespawn = function(Player: TActivePlayer): Byte;
   TOnAfterRespawn = procedure(Player: TActivePlayer);
   TOnDamage = function(Shooter, Victim: TActivePlayer; Damage: Integer;
@@ -338,13 +344,13 @@ interface
 	// --------------------------------- Map -------------------------------------
   TMap = class(TObject)
     private
-      //FObjects: array [1..128] of TActiveObject;
+      //FObjects: array [1..128] of TActiveMapObject;
       //FBullets: array [1..256] of TActiveBullet;
       //FSpawnpoints: array [1..128] of TActiveSpawnPoint;
       //FLastFlagObjs: array [1..3] of TActiveFlag;
       FOnBeforeMapChange: TOnBeforeMapChange;
       FOnAfterMapChange: TOnAfterMapChange;
-      function GetObject(ID: Byte): TActiveObject;
+      function GetObject(ID: Byte): TActiveMapObject;
       function GetBullet(ID: Byte): TActiveBullet;
       function GetSpawn(ID: Byte): TSpawnPoint;
       procedure SetSpawn(ID: Byte; const Spawn: TSpawnPoint);
@@ -355,17 +361,17 @@ interface
       function RayCast(x1, y1, x2, y2: Single; Player: Boolean = False;
         Flag: Boolean = False; Bullet: Boolean = True; CheckCollider: Boolean = False;
         Team: Byte = 0): Boolean;
-      //function RayCastVector(A, B: TVector2; Player: Boolean = False;
-      //  Flag: Boolean = False; Bullet: Boolean = True; CheckCollider: Boolean = False;
-      //  Team: Byte = 0): Boolean;
-      //function CreateBulletVector(A, B: TVector2; HitM: Single; sStyle: Byte;
-			//  Owner: TActivePlayer): Integer;
+      function RayCastVector(A, B: TVector; Player: Boolean = False;
+        Flag: Boolean = False; Bullet: Boolean = True; CheckCollider: Boolean = False;
+        Team: Byte = 0): Boolean;
+      function CreateBulletVector(A, B: TVector; HitM: Single; sStyle: Byte;
+			  Owner: TActivePlayer): Integer;
       function CreateBullet(X, Y, VelX, VelY, HitM: Single; sStyle: Byte; Owner: TActivePlayer): Integer;
-      function AddObject(Obj: TNewMapObject): TActiveObject;
+      function AddObject(Obj: TNewMapObject): TActiveMapObject;
       function AddSpawnPoint(Spawn: TSpawnPoint): TActiveSpawnPoint;
       procedure NextMap;
       procedure SetMap(NewMap: string);
-      property Objects[ID: Byte]: TActiveObject read GetObject;
+      property Objects[ID: Byte]: TActiveMapObject read GetObject;
       property Bullets[ID: Byte]: TActiveBullet read GetBullet;
       property Spawns[ID: Byte]: TSpawnPoint read GetSpawn write SetSpawn;
       property Name: string read GetName;
@@ -421,7 +427,7 @@ interface
     property Y: Single read GetY write SetY;
   end;
 
-  TActiveObject = class(TThing)
+  TActiveMapObject = class(TThing)
   protected
     FID: Byte;
     function GetActive: Boolean;
@@ -434,7 +440,7 @@ interface
     property ID: Byte read GetID;
   end;
 
-  TActiveFlag = class(TActiveObject)
+  TActiveFlag = class(TActiveMapObject)
   private
     function GetInBase: Boolean;
   public
@@ -849,9 +855,6 @@ interface
     property WType: Byte read GetType write SetType;
   end;
 
-
-  TStringArray = array of string;
-
 const
   // These number don't have to be correct, it's just to satisfy the FPC.
   WTYPE_EAGLE = 0;
@@ -973,6 +976,8 @@ procedure KickPlayer(Num: Byte);
 function GetTickCount: Cardinal;
 
 function arctan(Num: Extended): Extended;
+
+function LogN(base, x: double): double;
 
 function CreateBullet(X, Y, VelX, VelY, HitM: Single; sStyle, Owner: Byte): Integer;
 
@@ -1212,6 +1217,11 @@ begin
 end;
 
 function arctan(Num: Extended): Extended;
+begin
+  Result := 0;
+end;
+
+function LogN(base, x: double): double;
 begin
   Result := 0;
 end;
@@ -1977,7 +1987,7 @@ constructor TMap.Create;
 begin
 end;
 
-function TMap.GetObject(ID: Byte): TActiveObject;
+function TMap.GetObject(ID: Byte): TActiveMapObject;
 begin
   Result := nil;
 end;
@@ -2013,24 +2023,24 @@ begin
 	 Result := false;
 end;
 
-//function TMap.RayCastVector(A, B: TVector2; Player: Boolean = False;
-//  Flag: Boolean = False; Bullet: Boolean = True; CheckCollider: Boolean = False;
-//  Team: Byte = 0): Boolean;
-//begin
-//  Result := false;
-//end;
+function TMap.RayCastVector(A, B: TVector; Player: Boolean = False;
+  Flag: Boolean = False; Bullet: Boolean = True; CheckCollider: Boolean = False;
+  Team: Byte = 0): Boolean;
+begin
+  Result := false;
+end;
 
-//function TMap.CreateBulletVector(A, B: TVector2; HitM: Single; sStyle: Byte; Owner: TActivePlayer): Integer;
-//begin
-//  Result := 0;
-//end;
+function TMap.CreateBulletVector(A, B: TVector; HitM: Single; sStyle: Byte; Owner: TActivePlayer): Integer;
+begin
+  Result := 0;
+end;
 
 function TMap.CreateBullet(X, Y, VelX, VelY, HitM: Single; sStyle: Byte; Owner: TActivePlayer): Integer;
 begin
   Result := 0;
 end;
 
-function TMap.AddObject(Obj: TNewMapObject): TActiveObject;
+function TMap.AddObject(Obj: TNewMapObject): TActiveMapObject;
 begin
   Result := nil;
 end;
@@ -2117,22 +2127,22 @@ procedure TNewMapObject.SetY(Y: Single);
 begin
 end;
 
-function TActiveObject.GetActive: Boolean;
+function TActiveMapObject.GetActive: Boolean;
 begin
   Result := false;
 end;
 
-function TActiveObject.GetID: Byte;
+function TActiveMapObject.GetID: Byte;
 begin
   Result := 0;
 end;
 
-function TActiveObject.GetStyle: Byte;
+function TActiveMapObject.GetStyle: Byte;
 begin
   Result := 0;
 end;
 
-procedure TActiveObject.Kill;
+procedure TActiveMapObject.Kill;
 begin
 end;
 
