@@ -9,7 +9,7 @@ unit Scriptcore;
 //
 // > {$ifdef FPC}
 // > uses
-// >	 Scriptcore;
+// >   Scriptcore;
 // > {$endif}
 //
 // Some definitions may be missing since we could forget about something.
@@ -21,30 +21,30 @@ interface
 
  type
   // //////////////////////////// SC3 classes //////////////////////////////////
-	TActiveBullet = class;
+  TActiveBullet = class;
   TActiveFlag = class;
   TActiveMapObject = class;
   TActivePlayer = class;
   TActiveSpawnPoint = class;
-	TBanLists = class;
+  TBanLists = class;
   TFile = class;
   TGame = class;
-	TGlobal = class;
-	TIniFile = class;
+  TGlobal = class;
+  TIniFile = class;
   TMap = class;
-	TMapsList = class;
+  TMapsList = class;
   TNewMapObject = class;
   TNewWeapon = class;
   TPlayer = class;
   TPlayers = class;
   TPlayerWeapon = class;
-	TScript = class;
-	TSpawnPoint = class;
+  TScript = class;
+  TSpawnPoint = class;
   TStream = class;
   TStringList = class;
   TTeam = class;
   TThing = class;
-	TWeapon = class;
+  TWeapon = class;
 
   TStringArray = array of string;
 
@@ -52,35 +52,38 @@ interface
     x, y: single;
   end;
 
+  TValueSign = -1..1;
+  TRoundToRange = -37..37;
+
   // //////////////////////////// SC3 enums ////////////////////////////////////
   TJoinType = (TJoinNormal, TJoinSilent);
   TKickReason = (TKickNoResponse, TKickNoCheatResponse,
-		TKickChangeTeam, TKickPing, TKickFlooding, TKickConsole,
-		TKickConnectionCheat, TKickCheat, TKickLeft, TKickVoted,
-		TKickAC, TKickSilent
+    TKickChangeTeam, TKickPing, TKickFlooding, TKickConsole,
+    TKickConnectionCheat, TKickCheat, TKickLeft, TKickVoted,
+    TKickAC, TKickSilent
   );
 
   // //////////////////////////// SC3 events ///////////////////////////////////
   // Team
-	TOnJoinTeam = procedure(Player: TActivePlayer; Team: TTeam);
+  TOnJoinTeam = procedure(Player: TActivePlayer; Team: TTeam);
   TOnLeaveTeam = procedure(Player: TActivePlayer; Team: TTeam; Kicked: Boolean);
   TOnClockTick = procedure(Ticks: Integer);
   TOnJoin = procedure(Player: TActivePlayer; Team: TTeam);
   TOnLeave = procedure(Player: TActivePlayer; Kicked: Boolean);
 
-	// Game
-	TOnRequest = function(Ip, Hw: string; Port: Word; State: Byte;
-	 Forwarded: Boolean; Password: string): Integer;
+  // Game
+  TOnRequest = function(Ip, Hw: string; Port: Word; State: Byte;
+   Forwarded: Boolean; Password: string): Integer;
   TOnAdminCommand = function(Player: TActivePlayer; Command: string): Boolean;
   TOnTCPMessage = procedure(Ip: string; Port: Word; Message: string);
   TOnTCPCommand = function(Ip: string; Port: Word; Command: string): Boolean;
   TOnAdminConnect = procedure(Ip: string; Port: Word);
   TOnAdminDisconnect = procedure(Ip: string; Port: Word);
-	TOnBeforeMapChange = procedure(Next: string);
+  TOnBeforeMapChange = procedure(Next: string);
   TOnAfterMapChange = procedure(Next: string);
 
   // ActivePlayer
-	TOnFlagGrab = procedure(Player: TActivePlayer; TFlag: TActiveFlag;
+  TOnFlagGrab = procedure(Player: TActivePlayer; TFlag: TActiveFlag;
     Team: Byte; GrabbedInBase: Boolean);
   TOnFlagReturn = procedure(Player: TActivePlayer; Flag: TActiveFlag;
     Team: Byte);
@@ -90,10 +93,10 @@ interface
     Team: Byte; Thrown: Boolean);
   TOnKitPickup = procedure(Player: TActivePlayer;
     Kit: TActiveMapObject);
-  TOnBeforeRespawn = function(Player: TActivePlayer): Byte;
+  TOnBeforeRespawn = function(Player: TActivePlayer): TVector;
   TOnAfterRespawn = procedure(Player: TActivePlayer);
-  TOnDamage = function(Shooter, Victim: TActivePlayer; Damage: Integer;
-    BulletID: Byte): Integer;
+  TOnDamage = function(Shooter, Victim: TActivePlayer; Damage: Single;
+    BulletID: Byte): Single;
   TOnKill = procedure(Killer, Victim: TActivePlayer;
     WeaponType: Byte);
   TOnWeaponChange = procedure(Player: TActivePlayer;
@@ -107,7 +110,7 @@ interface
   TOnSpeak = procedure(Player: TActivePlayer; Text: string);
   TOnCommand = function(Player: TActivePlayer; Command: string): Boolean;
 
-	// Script
+  // Script
   TErrorType =
       (ErNoError, erCannotImport, erInvalidType, ErInternalError,
       erInvalidHeader, erInvalidOpcode, erInvalidOpcodeParameter, erNoMainProc,
@@ -120,8 +123,8 @@ interface
     Row, Col: Cardinal): Boolean;
 
 
-	////////////////////////////// SC3 classes ///////////////////////////////////
-	// ------------------------------- Bullet ------------------------------------
+  ////////////////////////////// SC3 classes ///////////////////////////////////
+  // ------------------------------- Bullet ------------------------------------
   TActiveBullet = class(TObject)
   protected
     FID: Byte;
@@ -146,16 +149,16 @@ interface
     property Owner: Byte read GetOwner;
   end;
 
-	// ----------------------------- BanList -------------------------------------
+  // ----------------------------- BanList -------------------------------------
   TBanHW = class(TObject)
-	  HW: string; Time: Integer; Reason: string;
-	end;
+    HW: string; Time: Integer; Reason: string;
+  end;
 
   TBanIP = class(TObject)
-	  IP: string; Time: Integer; Reason: string;
-	end;
+    IP: string; Time: Integer; Reason: string;
+  end;
 
-	TBanLists = class(TObject)
+  TBanLists = class(TObject)
   private
     function GetBannedHW(Num: Integer): TBanHW;
     function GetBannedIP(Num: Integer): TBanIP;
@@ -178,16 +181,16 @@ interface
 
   // --------------------------- File API --------------------------------------
   TStringList = class(TObject)
-	public
-	end;
+  public
+  end;
 
-	TIniFile = class(TObject)
-	public
-	end;
+  TIniFile = class(TObject)
+  public
+  end;
 
-	TStream = class(TObject)
-	public
-	end;
+  TStream = class(TObject)
+  public
+  end;
 
   TFile = class(TObject)
   public
@@ -329,7 +332,7 @@ interface
       property OnAdminDisconnect: TOnAdminDisconnect read FOnAdminDisconnect write FOnAdminDisconnect;
     end;
 
-	// -------------------------------- Global -----------------------------------
+  // -------------------------------- Global -----------------------------------
   TGlobal = class(TObject)
   private
     function GetDateSeparator: Char;
@@ -341,7 +344,7 @@ interface
     property ScriptShortDateFormat: string read GetShortDateFormat write SetShortDateFormat;
   end;
 
-	// --------------------------------- Map -------------------------------------
+  // --------------------------------- Map -------------------------------------
   TMap = class(TObject)
     private
       //FObjects: array [1..128] of TActiveMapObject;
@@ -365,7 +368,7 @@ interface
         Flag: Boolean = False; Bullet: Boolean = True; CheckCollider: Boolean = False;
         Team: Byte = 0): Boolean;
       function CreateBulletVector(A, B: TVector; HitM: Single; sStyle: Byte;
-			  Owner: TActivePlayer): Integer;
+        Owner: TActivePlayer): Integer;
       function CreateBullet(X, Y, VelX, VelY, HitM: Single; sStyle: Byte; Owner: TActivePlayer): Integer;
       function AddObject(Obj: TNewMapObject): TActiveMapObject;
       function AddSpawnPoint(Spawn: TSpawnPoint): TActiveSpawnPoint;
@@ -384,7 +387,7 @@ interface
         read FOnAfterMapChange write FOnAfterMapChange;
     end;
 
-	// ----------------------------- Maplist -------------------------------------
+  // ----------------------------- Maplist -------------------------------------
   TMapsList = class(TObject)
   private
     function GetMap(Num: Integer): string;
@@ -400,8 +403,44 @@ interface
     property MapsCount: Integer read GetMapsCount;
   end;
 
+  // ------------------------------- Math --------------------------------------
+  TMath = class
+  private
+    function GetE: Extended;
+    function GetPi: Extended;
+  public
+    function Sin(A: Extended): Extended;
+    function Cos(A: Extended): Extended;
+    function Tan(A: Extended): Extended;
+    function Cotan(A: Extended): Extended;
+    function Pow(A, B: Extended): Extended;
+    function LogN(A, B: Extended): Extended;
+    function Ln(A: Extended): Extended;
+    function ArcSin(A: Extended): Extended;
+    function ArcCos(A: Extended): Extended;
+    function ArcTan(A: Extended): Extended;
+    function ArcCotan(A: Extended): Extended;
+    function ArcTan2(A, B: Extended): Extended;
+    function Min(A, B: Extended): Extended;
+    function Max(A, B: Extended): Extended;
+    function Abs(A: Extended): Extended;
+    function Exp(A: Extended): Extended;
+    function Sign(A: Extended): TValueSign;
+    function IsNaN(A: Extended): Boolean;
+    function Round(A: Extended): Integer;
+    function RoundTo(A: Extended; B: TRoundToRange): Extended;
+    function DegToRad(A: Extended): Extended;
+    function RadToDeg(A: Extended): Extended;
+    function DegNormalize(A: Extended): Extended;
+    function InRange(const A, B, C: Double): Boolean;
+    function EnsureRange(const AValue, AMin, AMax: Double): Double;
+    function Random(Min, Max: Extended): Extended;
+    property E: Extended read GetE;
+    property Pi: Extended read GetPi;
+  end;
+
   // ------------------------------ Object -------------------------------------
-	TThing = class(TObject)
+  TThing = class(TObject)
   protected
     //FObj: PThing;
     function GetStyle: Byte; virtual; abstract;
@@ -499,6 +538,7 @@ interface
       function GetAdmin: Boolean;
       procedure SetAdmin(SetAsAdmin: Boolean);
       function GetDummy: Boolean;
+      procedure SetDummy(Dummy: Boolean);
     public
       destructor Destroy; override;
       //Not exported
@@ -532,7 +572,7 @@ interface
       property ChatSeeEnemy: string read GetChatSeeEnemy write SetChatSeeEnemy;
       property ChatWinning: string read GetChatWinning write SetChatWinning;
       property IsAdmin: Boolean read GetAdmin write SetAdmin;
-      property Dummy: Boolean read GetDummy;
+      property Dummy: Boolean read GetDummy write SetDummy;
     end;
 
     TNewPlayer = class(TPlayer)
@@ -657,13 +697,14 @@ interface
       procedure ForwardTo(TargetIP: string; TargetPort: Word; Message: string);
       procedure GiveBonus(BType: Byte);
       function Kick(reason: TKickReason): Boolean;
+      procedure ChangeTeam(NewTeam: Byte; JoinType: TJoinType);
       procedure Move(X, Y: Single);
       procedure SetVelocity(VelX, VelY: Single);
       procedure Tell(Text: string);
       procedure WriteConsole(Text: string; Color: Longint);
       property ID: Byte read FID;
       property Team: Byte read GetTeam write SetTeam;
-      property Alive: Boolean read GetAlive write SetAlive;
+      property Alive: Boolean read GetAlive;
       property Kills: Integer read GetKills write SetKills;
       property Deaths: Integer read GetDeaths;
       property Ping: Integer read GetPing;
@@ -720,7 +761,7 @@ interface
       property OnCommand: TOnCommand read FOnCommand write FOnCommand;
     end;
 
-	// ------------------------------ Players ------------------------------------
+  // ------------------------------ Players ------------------------------------
   TPlayers = class(TObject)
     private
       //FPlayers: array [1..32] of TActivePlayer;
@@ -741,8 +782,8 @@ interface
       property Player[ID: Byte]: TActivePlayer read GetPlayer; default;
     end;
 
-	// -------------------------------- Script -----------------------------------
-	TScript = class(TObject)
+  // -------------------------------- Script -----------------------------------
+  TScript = class(TObject)
   private
     FOnException: TOnException;
     function GetName: string;
@@ -761,7 +802,7 @@ interface
   end;
 
   // ---------------------------- SpawnPoint -----------------------------------
-	TSpawnPoint = class(TObject)
+  TSpawnPoint = class(TObject)
   protected
     function GetActive: Boolean;
     procedure SetActive(Active: Boolean);
@@ -818,8 +859,8 @@ interface
     property OnLeave: TOnLeaveTeam read FOnLeave write FOnLeave;
   end;
 
-	// -------------------------------- Weapon -----------------------------------
-	TWeapon = class(TObject)
+  // -------------------------------- Weapon -----------------------------------
+  TWeapon = class(TObject)
   protected
     //FWeapon: PGun;
     //function GetGun: TGun;
@@ -837,7 +878,7 @@ interface
     property Ammo: Byte read GetAmmo write SetAmmo;
   end;
 
-	TPlayerWeapon = class(TWeapon)
+  TPlayerWeapon = class(TWeapon)
   protected
     procedure SetAmmo(Ammo: Byte); override;
   public
@@ -883,10 +924,11 @@ const
 
 var
   // SC3
-	Map: TMap;
-	//File: TFile;
-	Game: TGame;
-	Global: TGlobal;
+  Map: TMap;
+  //File: TFile;
+  Game: TGame;
+  Global: TGlobal;
+  Math: TMath;
   Players: TPlayers;
   Script: TScript;
 
@@ -1339,7 +1381,7 @@ end;
 procedure GetPlayerXY(Id: Byte; var X, Y: Single);
 begin
   X := 0;
-	Y := 0;
+  Y := 0;
 end;
 
 procedure GetFlagsXY(var BlueFlagX, BlueFlagY, RedFlagX, RedFlagY: Single);
@@ -1420,7 +1462,7 @@ end;
 
 function StrToInt(s: string): integer;
 begin
-	Result := 0;
+  Result := 0;
 end;
 
 function StrToIntDef(s: string; default: integer): integer;
@@ -1430,7 +1472,7 @@ end;
 
 function ContainsString(haystack, needle: string): boolean;
 begin
-	Result := false;
+  Result := false;
 end;
 
 procedure RaiseException(code: integer; msg: string);
@@ -1439,42 +1481,42 @@ end;
 
 function IntToStr(x: integer): string;
 begin
-	Result := '';
+  Result := '';
 end;
 
 function FloatToStr(x: Extended): string;
 begin
-	Result := '';
+  Result := '';
 end;
 
 function StrPos(const A, S: string): Integer;
 begin
-	Result := 0;
+  Result := 0;
 end;
 
 function StrReplace(const A, B, C: string): string;
 begin
-	Result := '';
+  Result := '';
 end;
 
 function HTTPEncode(A: string): string;
 begin
-	Result := '';
+  Result := '';
 end;
 
 function HTTPDecode(A: string): string;
 begin
-	Result := '';
+  Result := '';
 end;
 
 function shell_exec(A: string): Integer;
 begin
-	Result := 0;
+  Result := 0;
 end;
 
 function Distance(x1, y1, x2, y2: single): single;
 begin
-	Result := 0;
+  Result := 0;
 end;
 
 function iif(cond: boolean; t, f: variant): variant;
@@ -1492,7 +1534,7 @@ end;
 
 function FormatFloat(format: string; float: double): string;
 begin
-	Result := '';
+  Result := '';
 end;
 
 procedure MovePlayer(ID: byte; x, y: single);
@@ -1501,7 +1543,7 @@ end;
 
 function ExceptionToString(ex_type, ex_param: integer): string;
 begin
-	Result := '';
+  Result := '';
 end;
 
 procedure ShutDown();
@@ -1663,7 +1705,7 @@ end;
 
 function TFile.Copy(const Source, Destination: string): Boolean;
 begin
-		 Result := false;
+     Result := false;
 end;
 
 function TFile.Move(const Source, Destination: string): Boolean;
@@ -1828,7 +1870,7 @@ end;
 
 function TGame.GetTimeLeft: Longint;
 begin
-	Result := 0;
+  Result := 0;
 end;
 
 function TGame.GetFriendlyFire: Boolean;
@@ -1851,7 +1893,7 @@ end;
 
 function TGame.GetAdminPassword: string;
 begin
-		 Result := '';
+     Result := '';
 end;
 
 procedure TGame.SetAdminPassword(Pass: string);
@@ -1966,7 +2008,7 @@ end;
 // -------------------------------- Global -------------------------------------
 function TGlobal.GetDateSeparator: Char;
 begin
-	Result := #0;
+  Result := #0;
 end;
 
 procedure TGlobal.SetDateSeparator(Separator: Char);
@@ -2020,7 +2062,7 @@ function TMap.RayCast(x1, y1, x2, y2: Single; Player: Boolean = False;
   Flag: Boolean = False; Bullet: Boolean = True; CheckCollider: Boolean = False;
   Team: Byte = 0): Boolean;
 begin
-	 Result := false;
+   Result := false;
 end;
 
 function TMap.RayCastVector(A, B: TVector; Player: Boolean = False;
@@ -2089,6 +2131,147 @@ end;
 function TMapsList.GetMapsCount: Integer;
 begin
   Result := 0;
+end;
+
+// -------------------------------- Math ---------------------------------------
+function TMath.GetE: Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.GetPi: Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Sin(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Cos(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Tan(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Cotan(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Pow(A, B: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.LogN(A, B: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Ln(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.ArcSin(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.ArcCos(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.ArcTan(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.ArcCotan(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.ArcTan2(A, B: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Min(A, B: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Max(A, B: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Abs(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Exp(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Sign(A: Extended): TValueSign;
+begin
+  Result := 0;
+end;
+
+function TMath.IsNaN(A: Extended): Boolean;
+begin
+  Result := false;
+end;
+
+function TMath.Round(A: Extended): Integer;
+begin
+  Result := 0;
+end;
+
+function TMath.RoundTo(A: Extended; B: TRoundToRange): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.DegToRad(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.RadToDeg(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.DegNormalize(A: Extended): Extended;
+begin
+  Result := 0.0;
+end;
+
+function TMath.InRange(const A, B, C: Double): Boolean;
+begin
+  Result := false;
+end;
+
+function TMath.EnsureRange(const AValue, AMin, AMax: Double): Double;
+begin
+  Result := 0.0;
+end;
+
+function TMath.Random(Min, Max: Extended): Extended;
+begin
+  Result := 0.0;
 end;
 
 // -------------------------------- Object -------------------------------------
@@ -2379,6 +2562,10 @@ begin
   Result := false;
 end;
 
+procedure TPlayer.SetDummy(Dummy: Boolean);
+begin
+end;
+
 //constructor TActivePlayer.Create(var Sprite: TSprite; ID: Byte);
 //begin
 //end;
@@ -2647,6 +2834,10 @@ end;
 function TActivePlayer.Kick(reason: TKickReason): Boolean;
 begin
   Result := false;
+end;
+
+procedure TActivePlayer.ChangeTeam(NewTeam: Byte; JoinType: TJoinType);
+begin
 end;
 
 procedure TActivePlayer.Move(X, Y: Single);
